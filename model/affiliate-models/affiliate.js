@@ -19,7 +19,20 @@ const affiliateSchema = new mongoose.Schema({
     joiningDate: { 
         type: Date, 
         default: Date.now 
-    }
+    },
+    courseLinks: [
+        {
+            courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'coursemain', required: true },
+            courseLink: { type: String, required: true, unique: true },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ],
+    usersJoined: [
+        { 
+            userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ]
 });
 
 

@@ -1,6 +1,7 @@
 const Affiliate = require('../model/affiliate-models/affiliate');
 const User = require('../model/student');
 const Checkout = require('../model/checkout');
+const CourseMain = require('../model/Course_main');
 const { generateAffiliateCode } = require('../utils/generateAffiliateCode');
 
 
@@ -42,6 +43,56 @@ const handleRegisterAsAffiliate = async function(req, res) {
         res.status(500).json({ error: error.message });
     }
 }
+
+
+
+const handleGenerateCourseLink = async function (req, res) {
+    try {
+        const { userId, courseId } = req.body;
+
+        // find Affiliate from userId
+        const affiliateFound = await Affiliate.findOne({ userId });
+        if (!affiliateFound) {
+            return res.status(400).json({ error: "You are not an affiliate." });
+        }
+
+        // Check if course link is already generated
+        const existingCourseLink = affiliateFound.courseLinks.find(
+            (link) => link.courseId.toString() === courseId
+        );
+        if (existingCourseLink) {
+            return res.status(200).json({
+                message: "Course link already exists.",
+                courseLink: existingCourseLink.courseLink,
+            });
+        }
+
+        // find course
+        const course = await CourseMain.findById(courseId);
+        if (!course) {
+            return res.status(404).json({ error: "Course not found." });
+        }
+
+        // Generate a course link.   
+        // Format :-  www.synthosphereacademy.in/courses/courseId?r=affiliateCode
+        const courseLink = `https://www.synthosphereacademy.in/courses/${courseId}?r=${affiliateFound.affiliateCode}`;
+
+        // save course link to Affilate Schema
+        affiliateFound.courseLinks.push({
+            courseId,
+            courseLink
+        });
+        await affiliateFound.save();
+
+        res.status(200).json({ message: "Course link generated.", courseLink });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+}
+
+
+
 
 
 
@@ -88,5 +139,6 @@ const handleAffiliateLogin = async function(req, res) {
 
 module.exports = {
     handleRegisterAsAffiliate,
-    handleAffiliateLogin
+    handleAffiliateLogin,
+    handleGenerateCourseLink
 }
