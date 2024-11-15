@@ -75,7 +75,7 @@ const handleGenerateCourseLink = async function (req, res) {
 
         // Generate a course link.   
         // Format :-  www.synthosphereacademy.in/courses/courseId?r=affiliateCode
-        const courseLink = `https://www.synthosphereacademy.in/courses/${courseId}?r=${affiliateFound.affiliateCode}`;
+        const courseLink = `https://www.synthosphereacademy.in/coursedetails/${courseId}?ref=${affiliateFound.affiliateCode}`;
 
         // save course link to Affilate Schema
         affiliateFound.courseLinks.push({
