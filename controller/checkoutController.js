@@ -67,7 +67,7 @@ exports.paymentverification_students = async (req, res) => {
       console.log('Saving user data:', paymentdetails_student);
       try {
         await paymentdetails_student.save();
-        if (affiliateId) {
+        if (affiliateCode) {
           await addComissionToAffiliate(affiliateCode, courses, amount, amount * 0.1);
         }
         return res.redirect(process.env.FRONTEND_LOCALHOST_URL + '/paymentSucess');
